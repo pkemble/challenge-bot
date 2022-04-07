@@ -39,8 +39,10 @@ async def add(ctx, *args):
     prompt = ""
     for arg in args:
         prompt = prompt + " " + arg
-    pw = os.getenv('DBPASSWORD')
-    conn = mysql.connector.connect(user='discord', password=pw, host='127.0.0.1', database='challenge_prompts')
+    dbpw = os.getenv('DBPASSWORD')
+    dbhost = os.getenv('DBHOST')
+    dbuser = os.getenv('DBUSERNAME')
+    conn = mysql.connector.connect(user=dbuser, password=pw, host=dbhost, database='challenge_prompts')
     cursor = conn.cursor()
     sql = "INSERT INTO individuation(prompt, author) VALUES('{0}','{1}')".format(prompt.lstrip(), ctx.message.author.id)
     try:
