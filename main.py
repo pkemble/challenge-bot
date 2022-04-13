@@ -1,12 +1,9 @@
 import os
 from discord.ext import commands
 import mysql.connector
+import markdown
 
 bot = commands.Bot(command_prefix='$')
-
-@bot.command()
-async def foo(ctx):
-    await ctx.send("Hi there ctx command")
 
 @bot.command()
 async def ind(ctx):
@@ -34,25 +31,34 @@ async def individuation(ctx):
 async def send_prompt(tgt, channel):
   await channel.send("Here's an individuation prompt for {0}".format(tgt))
 
-@bot.command()
-async def add(ctx, *args):
-    prompt = ""
-    for arg in args:
-        prompt = prompt + " " + arg
-    dbpw = os.getenv('DBPASSWORD')
-    dbhost = os.getenv('DBHOST')
-    dbuser = os.getenv('DBUSERNAME')
-    conn = mysql.connector.connect(user=dbuser, password=pw, host=dbhost, database='challenge_prompts')
-    cursor = conn.cursor()
-    sql = "INSERT INTO individuation(prompt, author) VALUES('{0}','{1}')".format(prompt.lstrip(), ctx.message.author.id)
-    try:
-        cursor.execute(sql)
-        conn.commit()
-        conn.close()
-        await ctx.channel.send("I added a thing and it probably worked")
-    except:
-        conn.rollback()
-    conn.close()
+# @bot.command()
+# async def add(ctx, *args):
+#     prompt = ""
+#     for arg in args:
+#         prompt = prompt + " " + arg#.replace('"', '\"').replace("'", "\\'")
+#     #prompt = json.dumps(prompt)
+#     prompt = markdown.markdown(prompt)
+#     dbpw = os.getenv('DBPASSWORD')
+#     dbhost = os.getenv('DBHOST')
+#     dbuser = os.getenv('DBUSERNAME')
+#     conn = mysql.connector.connect(user=dbuser, password=dbpw, host=dbhost, database='challenge_prompts')
+#     cursor = conn.cursor()
+#     sql = "INSERT INTO individuation(prompt, author) VALUES('{0}','{1}')".format(prompt, ctx.message.author.id)
+#     print("Going to send the following to SQL: ", sql)
+#     try:
+#         cursor.execute(sql)
+#         conn.commit()
+#         if cursor.rowcount > 0:
+#             id = cursor.lastrowid
+#             sql_check = "SELECT * FROM individuation WHERE id={0}".format(id)
+#             cursor.execute(sql_check)
+#             new_prompt = cursor.fetchall()
+#         conn.close()
+#         await ctx.channel.send("<@{0}> added the following prompt: \n {1}".format(new_prompt[0][2], new_prompt[0][1]))
+#     except Exception as e:
+#         print("Oops", e)
+#         conn.rollback()
+#         conn.close()
     
 @bot.event
 async def on_ready():
